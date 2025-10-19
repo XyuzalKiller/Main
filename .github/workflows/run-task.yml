@@ -53,4 +53,4 @@ jobs:
 
           git add -f -- .
           git commit -m "task: ${{ inputs.task_name }}" || exit 0
-          git push -f "https://${{ secrets.GITHUB_TOKEN }}@github.com/XyuzalKiller/Aliucord" main
+          git push -f "https://${{ secrets.PAT }}@github.com/XyuzalKiller/Aliucord" main
