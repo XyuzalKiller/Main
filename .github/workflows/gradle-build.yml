@@ -1,0 +1,41 @@
+name: Gradle Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        required: true
+        default: XyuzalKiller/Main
+        type: string
+
+jobs:
+  gradle-build:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ inputs.repository }}
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-disabled: true
+
+      - name: Build
+        run: chmod +x gradlew && ./gradlew build
+
+      - name: Upload Gradle User Home Directory
+        uses: actions/upload-artifact@v4
+        with:
+          name: .gradle
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          include-hidden-files: true
