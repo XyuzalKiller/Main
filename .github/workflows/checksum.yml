@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Checksum
         run: |
-          file=$(curl -sSLO --write-out "%{filename_effective}" "${{ inputs.file_url }}")
+          file=$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.file_url }}")
           sha512=$(sha512sum "$file" | awk '{print $1}')
           sha256=$(sha256sum "$file" | awk '{print $1}')
 
