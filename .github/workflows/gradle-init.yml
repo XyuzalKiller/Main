@@ -5,7 +5,7 @@ on:
     inputs:
       project_name:
         description: Project Name
-        default: Project Name
+        default: Test Project
         type: string
       package:
         description: Package
