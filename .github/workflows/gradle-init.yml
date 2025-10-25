@@ -9,14 +9,13 @@ on:
         type: string
       package:
         description: Package
-        default: com.razertexz.project
+        default: com.rt.projectname
         type: string
       type:
         description: Type
         default: basic
         type: choice
         options:
-          - pom
           - basic
           - java-application
           - java-gradle-plugin
@@ -24,13 +23,6 @@ on:
           - kotlin-application
           - kotlin-gradle-plugin
           - kotlin-library
-          - groovy-application
-          - groovy-gradle-plugin
-          - groovy-library
-          - scala-application
-          - scala-library
-          - cpp-application
-          - cpp-library
       dsl:
         description: DSL
         default: kotlin
