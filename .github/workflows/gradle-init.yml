@@ -41,7 +41,7 @@ on:
       java_version:
         required: true
         description: Java Version
-        default: "21"
+        default: "25"
         type: string
 
 jobs:
