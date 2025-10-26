@@ -28,9 +28,7 @@ jobs:
       - name: Checkout Aliucord
         if: ${{ inputs.checkout_aliucord }}
         run: |
-          rm -rf .git
-
-          git init -b main
+          rm -rf .git && git init -b main
           git fetch "https://github.com/Aliucord/Aliucord" main
           git reset --hard FETCH_HEAD
 
