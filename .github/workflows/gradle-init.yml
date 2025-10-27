@@ -9,7 +9,7 @@ on:
         type: string
       package:
         description: Package
-        default: com.rt.projectname
+        default: com.projectname
         type: string
       type:
         description: Type
