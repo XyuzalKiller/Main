@@ -24,7 +24,7 @@ jobs:
           distribution: temurin
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
         with:
           cache-disabled: true
 
@@ -32,7 +32,7 @@ jobs:
         run: chmod +x gradlew && ./gradlew build
 
       - name: Upload Gradle User Home Directory
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: .gradle
           path: |
