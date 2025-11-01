@@ -1,0 +1,15 @@
+name: Generate Gradle Encryption Key
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate-gradle-encryption-key:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Gradle Encryption Key
+        run: |
+          cat << END >> "$GITHUB_STEP_SUMMARY"
+          \`\`\`
+          $(openssl rand -base64 16)
+          \`\`\`
