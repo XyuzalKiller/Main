@@ -11,7 +11,7 @@ on:
       workflow_name:
         required: true
         description: Workflow name
-        default: build
+        default: build.yml
         type: string
 
 jobs:
