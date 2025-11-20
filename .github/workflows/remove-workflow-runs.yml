@@ -6,12 +6,12 @@ on:
       repository:
         required: true
         description: Repository
-        default: repo
+        default: My-plugins
         type: string
       workflow_name:
         required: true
         description: Workflow Name
-        default: name.yml
+        default: build
         type: string
 
 jobs:
