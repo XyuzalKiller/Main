@@ -40,16 +40,17 @@ jobs:
           distribution: temurin
 
       - name: Setup Gradle
+        if: ${{ inputs.patches_task != 'none' }}
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Run Task
-        run: chmod +x gradlew && ./gradlew ":patches:${{ inputs.patches_task }}"
-
-      - name: Push Changes
+      - name: Run Patches Task
+        if: ${{ inputs.patches_task != 'none' }}
         run: |
+          chmod +x gradlew && ./gradlew ":patches:${{ inputs.patches_task }}"
+
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
           git add -f -- .
-          git commit -m "task: ${{ inputs.task_name }}" || exit 0
+          git commit -m "patches: ${{ inputs.patches_task }}" || exit 0
           git push -f "https://${{ secrets.PAT }}@github.com/XyuzalKiller/Aliucord" main
