@@ -10,7 +10,7 @@ on:
         type: string
       workflow_name:
         required: true
-        description: Workflow Name
+        description: Workflow name
         default: build
         type: string
 
