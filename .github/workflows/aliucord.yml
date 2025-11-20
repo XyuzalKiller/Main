@@ -40,7 +40,6 @@ jobs:
         run: chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
 
       - name: Commit and Push
-        if: ${{ inputs.task_name != 'none' }}
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
