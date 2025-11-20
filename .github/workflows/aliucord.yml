@@ -22,15 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          sparse-checkout-cone-mode: false
-          sparse-checkout: ${{ inputs.checkout_aliucord && '.github/workflows/run-task.yml' || null }}
-
-      - name: Checkout Aliucord
-        if: ${{ inputs.checkout_aliucord }}
-        run: |
-          rm -rf .git && git init -b main
-          git fetch https://github.com/Aliucord/Aliucord main
-          git reset --hard FETCH_HEAD
+          repository: ${{ inputs.checkout_aliucord && Aliucord/Aliucord || github.repository_owner/Aliucord }} 
 
       - name: Setup JDK 11
         if: ${{ inputs.task_name != 'none' }}
@@ -53,4 +45,4 @@ jobs:
 
           git add -f -- .
           git commit -m "patches: ${{ inputs.task_name }}" || exit 0
-          git push -f "https://${{ secrets.PAT }}@github.com/XyuzalKiller/Aliucord" main
+          git push -f "https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/Aliucord" main
