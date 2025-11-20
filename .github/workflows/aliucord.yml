@@ -1,13 +1,13 @@
-name: Run Task
-run-name: Run Task (${{ inputs.task_name }})
+name: Aliucord
 
 on:
   workflow_dispatch:
     inputs:
-      task_name:
+      patches_task:
         description: The task to run
         type: choice
         options:
+        - none
         - disassembleWithPatches
         - writePatches
         - testPatches
@@ -16,7 +16,7 @@ on:
         type: boolean
 
 jobs:
-  run-task:
+  aliucord:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,10 +29,11 @@ jobs:
         if: ${{ inputs.checkout_aliucord }}
         run: |
           rm -rf .git && git init -b main
-          git fetch "https://github.com/Aliucord/Aliucord" main
+          git fetch https://github.com/Aliucord/Aliucord main
           git reset --hard FETCH_HEAD
 
       - name: Setup JDK 11
+        if: ${{ inputs.patches_task != 'none' }}
         uses: actions/setup-java@v5
         with:
           java-version: 11
@@ -42,7 +43,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run Task
-        run: chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
+        run: chmod +x gradlew && ./gradlew ":patches:${{ inputs.patches_task }}"
 
       - name: Push Changes
         run: |
