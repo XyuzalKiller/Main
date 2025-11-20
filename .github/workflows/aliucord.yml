@@ -3,8 +3,8 @@ name: Aliucord
 on:
   workflow_dispatch:
     inputs:
-      patches_task:
-        description: The task to run
+      task_name:
+        description: Task to run
         type: choice
         options:
         - none
@@ -33,24 +33,24 @@ jobs:
           git reset --hard FETCH_HEAD
 
       - name: Setup JDK 11
-        if: ${{ inputs.patches_task != 'none' }}
+        if: ${{ inputs.task_name != 'none' }}
         uses: actions/setup-java@v5
         with:
           java-version: 11
           distribution: temurin
 
       - name: Setup Gradle
-        if: ${{ inputs.patches_task != 'none' }}
+        if: ${{ inputs.task_name != 'none' }}
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Run Patches Task
-        if: ${{ inputs.patches_task != 'none' }}
+      - name: Run Task
+        if: ${{ inputs.task_name != 'none' }}
         run: |
-          chmod +x gradlew && ./gradlew ":patches:${{ inputs.patches_task }}"
+          chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
 
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
           git add -f -- .
-          git commit -m "patches: ${{ inputs.patches_task }}" || exit 0
+          git commit -m "patches: ${{ inputs.task_name }}" || exit 0
           git push -f "https://${{ secrets.PAT }}@github.com/XyuzalKiller/Aliucord" main
