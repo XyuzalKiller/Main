@@ -22,5 +22,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAT }}
         run: |
-          gh api --paginate --jq ".workflow_runs[].id" "/repos/${{ github.repository_owner }}/${{ inputs.repository }}/actions/workflows/${{ inputs.workflow_name }}/runs" \
-          | xargs -I {} gh run delete --repo "${{ github.repository_owner }}/${{ inputs.repository }}" {}
+          gh api --paginate --jq ".workflow_runs[].id" "/repos/${{ github.repository_owner }}/${{ inputs.repository }}/actions/workflows/${{ inputs.workflow_name }}/runs?status=completed" \
+          | xargs -r -I {} gh run delete --repo "${{ github.repository_owner }}/${{ inputs.repository }}" {}
