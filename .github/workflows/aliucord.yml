@@ -22,7 +22,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          repository: ${{ inputs.checkout_aliucord && 'Aliucord/Aliucord' || github.repository_owner'/Aliucord' }} 
+          repository: ${{ inputs.checkout_aliucord && 'Aliucord/Aliucord' || format('{0}/Aliucord', github.repository_owner) }} 
 
       - name: Setup JDK 11
         if: ${{ inputs.task_name != 'none' }}
