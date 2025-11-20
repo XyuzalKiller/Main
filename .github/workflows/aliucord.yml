@@ -45,5 +45,5 @@ jobs:
           git config user.email "actions@github.com"
 
           git add -f -- .
-          git commit -m "misc: $GITHUB_SHA" || exit 0
+          git commit -m "misc: update" || exit 0
           git push -f "https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/Aliucord" main
