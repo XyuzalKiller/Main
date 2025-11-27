@@ -1,0 +1,26 @@
+name: Remove Workflow Runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository:
+        required: true
+        description: Repository
+        default: p
+        type: string
+      workflow_name:
+        required: true
+        description: Workflow name
+        default: build.yml
+        type: string
+
+jobs:
+  remove-workflow-runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove Workflow Runs
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          gh api --paginate --jq ".workflow_runs[].id" "/repos/${{ github.repository_owner }}/${{ inputs.repository }}/actions/workflows/${{ inputs.workflow_name }}/runs?status=completed" \
+          | xargs -r -I {} gh run delete --repo "${{ github.repository_owner }}/${{ inputs.repository }}" {}
