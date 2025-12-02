@@ -1,0 +1,87 @@
+#!/bin/bash
+if [ ! "$BASH_VERSION" ]; then
+    printf "+ Please use Bash to execute this script.\n"
+    exit 1
+fi
+
+print_usage() {
+    printf "\n+ Usage: [-r | --reset-git] [-n | --no-confirmation] [-f | --force-push] [-a | --allow-empty] [-c <depth> | --clone-repo <depth>] <github_username> <github_email> [<github_token>] [<repository_owner/repository_name>] [<branch>] [<commit_message>]\n\n"
+    exit 1
+}
+
+parsed_options=$(getopt --options "rnfc:a" --longoptions "reset-git,no-confirmation,force-push,clone-repo:,allow-empty" -- "$@")
+if [[ "$?" -ne 0 ]]; then print_usage; fi
+
+eval set -- "$parsed_options"
+
+while true; do
+    case "$1" in
+        -r|--reset-git)
+            reset_git=true
+            shift;;
+        -n|--no-confirmation)
+            no_confirmation=true
+            shift;;
+        -f|--force-push)
+            force_push=true
+            shift;;
+        -a|--allow-empty)
+            allow_empty=true
+            shift;;
+        -c|--clone-repo)
+            if [[ "$2" =~ ^[0-9]+$ ]]; then
+                clone_depth="$2"
+            else
+                printf "+ Invalid depth value.\n"
+                exit 1
+            fi
+            shift 2;;
+        --)
+            shift
+            break;;
+    esac
+done
+
+if [[ "$#" -lt 2 ]]; then print_usage; fi
+gh_username="$1"
+gh_email="$2"
+gh_token="$3"
+repository="${4:-"$gh_username"/"${PWD##*/}"}"
+branch="${5:-main}"
+commit_message="${6:-misc: update}"
+repository_url="https://${gh_token:+"$gh_token@"}github.com/$repository"
+
+if ! command -v git 1>/dev/null; then
+    printf "\n+ Git is not installed.\n+ Installing Git...\n\n"
+    apt-get install -y -o DPkg::Progress-Fancy="1" -o APT::Color="1" git
+fi
+
+git config set --global safe.directory "*"
+
+if [[ -v clone_depth ]]; then
+    git clone -b "$branch" --filter=blob:none --depth "$clone_depth" "$repository_url"
+    exit 0
+fi
+
+if [[ -v reset_git ]]; then
+    rm -rf .git
+fi
+
+if [[ -d .git ]]; then
+    git switch "$branch" 2>/dev/null || git switch -c "$branch"
+else
+    git init -qb "$branch"
+fi
+
+git config set --local user.name "$gh_username"
+git config set --local user.email "$gh_email"
+git remote set-url origin "$repository_url" 2>/dev/null || git remote add origin "$repository_url"
+
+git add -- .
+if [[ ! -v no_confirmation ]]; then
+    git status
+    read -n 1 -p "% Press [Enter] to continue."
+fi
+
+git commit ${allow_empty:+--allow-empty} -m "$(printf "$commit_message")"
+git push ${force_push:+-f} -u origin "$branch" || git reset HEAD~ 2>/dev/null

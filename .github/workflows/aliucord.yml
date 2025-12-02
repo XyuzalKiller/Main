@@ -1,0 +1,51 @@
+name: Aliucord
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_name:
+        description: Task to run
+        type: choice
+        options:
+        - none
+        - disassembleWithPatches
+        - writePatches
+        - testPatches
+      checkout_aliucord:
+        description: Checkout Aliucord
+        type: boolean
+
+jobs:
+  aliucord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ inputs.checkout_aliucord && 'Aliucord/Aliucord' || format('{0}/Aliucord', github.repository_owner) }} 
+
+      - name: Setup JDK 11
+        if: ${{ inputs.task_name != 'none' }}
+        uses: actions/setup-java@v5
+        with:
+          java-version: 11
+          distribution: temurin
+
+      - name: Setup Gradle
+        if: ${{ inputs.task_name != 'none' }}
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Run Task
+        if: ${{ inputs.task_name != 'none' }}
+        run: chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
+
+      - name: Commit and Push
+        run: |
+          rm -rf .git && git init -b main
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add -f -- .
+          git commit -m "misc: update" || exit 0
+          git push -f "https://${{ secrets.PAT }}@github.com/${{ github.repository_owner }}/Aliucord" main
