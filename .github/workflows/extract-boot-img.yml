@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Extract Boot IMG
         run: |
-          tar -xf --occurrence "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")"
+          tar -xf "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")" --occurrence --wildcards '*/images/boot.img'
           ls -R
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v6
         with:
           name: artifact
-          path: images/boot.img
+          path: boot.img
