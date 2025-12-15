@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Extract Boot IMG
         run: |
-          tar -xf "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")"
+          tar -xf --occurrence "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")"
           ls -R
 
       - name: Upload Artifact
