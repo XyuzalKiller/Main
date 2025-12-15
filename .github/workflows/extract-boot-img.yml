@@ -1,4 +1,4 @@
-name: Extract Boot Image
+name: Extract Boot IMG
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ jobs:
   extract-boot-img:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate Keystore
+      - name: Extract Boot IMG
         run: |
           tar -xzf "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")"
           ls -R
