@@ -13,9 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Extract Boot IMG
-        run: |
-          tar -xf "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")" --occurrence --wildcards '*/images/boot.img'
-          ls -R
+        run: tar -xf "$(curl -sSLOJ --write-out "%{filename_effective}" "${{ inputs.rom_link }}")" --occurrence --wildcards '*/images/boot.img'
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v6
