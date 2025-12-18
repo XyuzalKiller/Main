@@ -28,4 +28,9 @@ jobs:
           \`\`\`
           $(sha256sum "$file" | awk '{print $1}')
           \`\`\`
+
+          ## MD5
+          \`\`\`
+          $(md5sum "$file" | awk '{print $1}')
+          \`\`\`
           END
