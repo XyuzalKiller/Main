@@ -14,11 +14,11 @@ jobs:
     steps:
       - name: Extract Boot
         run: |
-          curl -L "${{ inputs.rom_link }}" | tar -xzf - --occurrence --no-anchored boot.img
+          curl -L "${{ inputs.rom_link }}" | tar -xzf - --occurrence --strip-components=2 --wildcards "*/images/boot.img"
           printf "[$(basename "${{ inputs.rom_link }}")](${{ inputs.rom_link }})" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v6
         with:
           name: boot
-          path: "**/boot.img"
+          path: boot.img
