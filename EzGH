@@ -1,0 +1,80 @@
+#!/bin/bash
+if [ ! "$BASH_VERSION" ]; then
+    printf "+ Please use Bash to execute this script.\n"
+    exit 1
+fi
+
+parsed_options="$(getopt -o b:m:lfc: -- "$@")"
+eval set -- "$parsed_options"
+
+branch="main"
+commit_message="misc: update"
+while true; do
+    case "$1" in
+        -b)
+            branch="$2"
+            shift 2;;
+        -m)
+            commit_message="$(printf "$2")"
+            shift 2;;
+        -l)
+            fetch_latest=true
+            shift;;
+        -f)
+            force_push=true
+            shift;;
+        -c)
+            if [[ "$2" =~ ^[0-9]+$ ]]; then
+                clone_depth="$2"
+            else
+                printf "+ Invalid depth value.\n"
+                exit 1
+            fi
+            shift 2;;
+        --)
+            shift
+            break;;
+    esac
+done
+
+if [[ "$#" -lt 2 ]]; then
+    printf "\n+ Usage: [-b <branch>] [-m <message>] [-l] [-f] [-c <depth>] <github_username> <github_email> [<github_token>] [<repository_owner/repository_name>]\n\n"
+    exit 1
+fi
+
+gh_username="$1"
+gh_email="$2"
+gh_token="$3"
+repository="${4:-$gh_username/${PWD##*/}}"
+repository_url="https://${gh_token:+x-access-token:$gh_token@}github.com/$repository"
+
+if ! command -v git 1>/dev/null; then
+    printf "\n+ Git is not installed.\n+ Installing Git...\n\n"
+    apt-get install -y -o DPkg::Progress-Fancy="1" -o APT::Color="1" git
+fi
+
+git config set --global safe.directory "*"
+
+if [[ -v clone_depth ]]; then
+    git clone -b "$branch" --depth "$clone_depth" --filter=blob:none "$repository_url"
+    exit 0
+fi
+
+if [[ ! -d .git ]]; then
+    git init -q
+fi
+
+git config set --local user.name "$gh_username"
+git config set --local user.email "$gh_email"
+
+git remote set-url origin "$repository_url" 2>/dev/null || git remote add origin "$repository_url"
+if [[ -v fetch_latest ]]; then
+    git fetch --depth 1 --filter=blob:none origin "$branch" || false && git reset FETCH_HEAD
+fi
+
+git add -- .
+git status
+read -n 1 -p "% Press [Enter] to continue."
+
+git commit -m "$commit_message" --allow-empty
+git push ${force_push:+-f} origin "HEAD:$branch" || git reset "origin/$branch"
