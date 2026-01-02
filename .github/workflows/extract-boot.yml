@@ -15,6 +15,7 @@ jobs:
       - name: Extract Boot
         run: |
           curl -L "${{ inputs.rom_link }}" | tar -xzf - --occurrence --no-anchored boot.img
+          printf "$(basename "${{ inputs.rom_link }}")" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v6
