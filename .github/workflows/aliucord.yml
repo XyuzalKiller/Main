@@ -7,7 +7,6 @@ on:
         description: Task to Run
         type: choice
         options:
-        - none
         - disassembleWithPatches
         - writePatches
         - testPatches
