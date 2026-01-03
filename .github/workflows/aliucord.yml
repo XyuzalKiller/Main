@@ -32,7 +32,7 @@ jobs:
 
       - name: Run Task
         run: |
-          ${{ inputs.task_name != "checkoutAliucord" && chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
+          ${{ inputs.task_name != "checkoutAliucord" }} && chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
