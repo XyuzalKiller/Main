@@ -7,6 +7,7 @@ on:
         description: Task to Run
         type: choice
         options:
+        - none
         - disassembleWithPatches
         - writePatches
         - testPatches
@@ -33,6 +34,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v5
 
       - name: Run
+        if: ${{ inputs.task_name != "none" }}
         run: chmod +x gradlew && ./gradlew ":patches:${{ inputs.task_name }}"
 
       - name: Commit and Push
