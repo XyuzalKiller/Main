@@ -1,0 +1,26 @@
+name: Prune Runs
+
+on:
+  workflow_dispatch:
+    inputs:
+      repository_name:
+        description: Repository
+        default: p
+        type: string
+        required: true
+      workflow_name:
+        description: Workflow Name
+        type: string
+
+jobs:
+  prune-runs:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PAT }}
+      REPOSITORY: ${{ github.repository_owner }}/${{ inputs.repository_name }}
+      WORKFLOW_NAME: ${{ inputs.workflow_name }}
+    steps:
+      - name: Prune Runs
+        run: |
+          gh api --paginate --jq ".workflow_runs[].id" "/repos/$REPOSITORY/actions/${WORKFLOW_NAME:+workflows/$WORKFLOW_NAME/}runs?status=completed" \
+            | xargs -r -I {} gh run delete --repo "$REPOSITORY" {}

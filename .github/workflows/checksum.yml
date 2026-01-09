@@ -1,0 +1,38 @@
+name: Checksum
+
+on:
+  workflow_dispatch:
+    inputs:
+      file_url:
+        description: File URL
+        type: string
+        required: true
+
+jobs:
+  checksum:
+    runs-on: ubuntu-latest
+    env:
+      FILE_URL: ${{ inputs.file_url }}
+    steps:
+      - name: Checksum
+        run: |
+          filename="$(curl -LOJ --write-out "%{filename_effective}" "$FILE_URL")"
+
+          cat << END >> "$GITHUB_STEP_SUMMARY"
+          # "[$filename]($FILE_URL)"
+
+          ## SHA512
+          \`\`\`
+          $(sha512sum "$filename" | awk '{print $1}')
+          \`\`\`
+
+          ## SHA256
+          \`\`\`
+          $(sha256sum "$filename" | awk '{print $1}')
+          \`\`\`
+
+          ## MD5
+          \`\`\`
+          $(md5sum "$filename" | awk '{print $1}')
+          \`\`\`
+          END

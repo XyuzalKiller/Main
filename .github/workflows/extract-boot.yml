@@ -1,0 +1,26 @@
+name: Extract Boot
+
+on:
+  workflow_dispatch:
+    inputs:
+      rom_link:
+        description: Link to the ROM
+        type: string
+        required: true
+
+jobs:
+  extract-boot:
+    runs-on: ubuntu-latest
+    env:
+      ROM_LINK: ${{ inputs.rom_link }}
+    steps:
+      - name: Extract Boot
+        run: |
+          curl -L "$ROM_LINK" | tar -xzf - --occurrence --strip-components=2 --wildcards "*/images/boot.img"
+          printf "[$(basename "$ROM_LINK")]($ROM_LINK)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: boot
+          path: boot.img

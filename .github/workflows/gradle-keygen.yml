@@ -1,0 +1,14 @@
+name: Gradle Keygen
+
+on: workflow_dispatch
+
+jobs:
+  gradle-keygen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate Key
+        run: |
+          cat << END >> "$GITHUB_STEP_SUMMARY"
+          \`\`\`
+          $(openssl rand -base64 16)
+          \`\`\`

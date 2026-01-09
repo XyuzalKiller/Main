@@ -1,0 +1,69 @@
+name: Gradle Init
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_name:
+        description: Project Name
+        default: Test Project
+        type: string
+      package:
+        description: Package
+        default: com.projectname
+        type: string
+      type:
+        description: Type
+        default: basic
+        type: choice
+        options:
+          - basic
+          - java-application
+          - java-library
+          - kotlin-application
+          - kotlin-library
+      dsl:
+        description: DSL
+        default: kotlin
+        type: choice
+        options:
+         - groovy
+         - kotlin
+      java_version:
+        description: Java Version
+        default: "21"
+        type: string
+        required: true
+
+jobs:
+  gradle-init:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: ${{ inputs.project_name }}
+      PACKAGE: ${{ inputs.package }}
+      TYPE: ${{ inputs.type }}
+      DSL: ${{ inputs.dsl }}
+      JAVA_VERSION: ${{ inputs.java_version }}
+    steps:
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          gradle-version: current
+          cache-disabled: true
+
+      - name: Gradle Init
+        run: |
+          gradle init \
+            --no-comments \
+            --no-split-project \
+            --project-name "$PROJECT_NAME" \
+            --package "$PACKAGE" \
+            --type "$TYPE" \
+            --dsl "$DSL" \
+            --java-version "$JAVA_VERSION"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: ${{ env.PROJECT_NAME }}
+          path: .
+          include-hidden-files: true
